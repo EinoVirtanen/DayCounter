@@ -8,7 +8,7 @@ static TextLayer *s_aika_layer;
 static void update_time() {
   time_t epochtime = time(NULL);
   struct tm *tick_time = localtime(&epochtime);
-  time_t alku = 1486861200; // <-----------------------------------------
+  time_t alku = 1646964000; // <-----------------------------------------
   int erotus = (epochtime - alku) / (24 * 60 * 60);
   
   static char s_buffer[5];
@@ -53,7 +53,7 @@ static void main_window_load(Window *window) {
   // Oman tekstilayerin setit
   text_layer_set_background_color(s_teksti_layer, GColorWhite);
   text_layer_set_text_color(s_teksti_layer, GColorBlack);
-  text_layer_set_text(s_teksti_layer, "0AP");
+  text_layer_set_text(s_teksti_layer, "0.0");
   text_layer_set_font(s_teksti_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
   text_layer_set_text_alignment(s_teksti_layer, GTextAlignmentCenter);
   
