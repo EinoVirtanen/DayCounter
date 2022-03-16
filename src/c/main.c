@@ -10,6 +10,7 @@ static void update_time() {
   struct tm *tick_time = localtime(&epochtime);
   time_t alku = 1646964000; // <-----------------------------------------
   int erotus = (epochtime - alku) / (24 * 60 * 60);
+  int quiet_time_status = quiet_time_is_active();
   
   static char s_buffer[5];
   snprintf(s_buffer, sizeof(s_buffer), "%d", erotus);
@@ -21,6 +22,25 @@ static void update_time() {
 
   // Display this time on the TextLayer
   text_layer_set_text(s_aika_layer, s_buffer2);
+
+  // Toimiskohan quiet time logiikka tassa?
+  if (quiet_time_status == 1) {
+    text_layer_set_background_color(s_time_layer, GColorBlack);
+    text_layer_set_background_color(s_teksti_layer, GColorBlack);
+    text_layer_set_background_color(s_aika_layer, GColorBlack);
+    text_layer_set_text_color(s_time_layer, GColorWhite);
+    text_layer_set_text_color(s_teksti_layer, GColorWhite);
+    text_layer_set_text_color(s_aika_layer, GColorWhite);
+  } else {
+    text_layer_set_background_color(s_time_layer, GColorWhite);
+    text_layer_set_background_color(s_teksti_layer, GColorWhite);
+    text_layer_set_background_color(s_aika_layer, GColorWhite);
+    text_layer_set_text_color(s_time_layer, GColorBlack);
+    text_layer_set_text_color(s_teksti_layer, GColorBlack);
+    text_layer_set_text_color(s_aika_layer, GColorBlack);
+  }
+
+
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
@@ -53,8 +73,8 @@ static void main_window_load(Window *window) {
   // Oman tekstilayerin setit
   text_layer_set_background_color(s_teksti_layer, GColorWhite);
   text_layer_set_text_color(s_teksti_layer, GColorBlack);
-  text_layer_set_text(s_teksti_layer, "0.0");
-  text_layer_set_font(s_teksti_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+  text_layer_set_text(s_teksti_layer, "0.0‰");
+  text_layer_set_font(s_teksti_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24));
   text_layer_set_text_alignment(s_teksti_layer, GTextAlignmentCenter);
   
   
