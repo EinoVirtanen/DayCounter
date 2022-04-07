@@ -1,46 +1,40 @@
 #include <pebble.h>
 
 static Window *s_main_window;
-static TextLayer *s_time_layer;
-static TextLayer *s_teksti_layer;
-static TextLayer *s_aika_layer;
+static TextLayer *s_mid_layer;
+static TextLayer *s_up_layer;
+static TextLayer *s_low_layer;
 
 static void update_time() {
   time_t epochtime = time(NULL);
   struct tm *tick_time = localtime(&epochtime);
-  time_t alku = 1646964000; // <-----------------------------------------
+  time_t alku = 1649257200; // <-----------------------------------------
   int erotus = (epochtime - alku) / (24 * 60 * 60);
   int quiet_time_status = quiet_time_is_active();
   
   static char s_buffer[5];
   snprintf(s_buffer, sizeof(s_buffer), "%d", erotus);
-  text_layer_set_text(s_time_layer, s_buffer);
+  text_layer_set_text(s_mid_layer, s_buffer);
   
-  // Write the current hours into a buffer
   static char s_buffer2[3];
-  strftime(s_buffer2, sizeof(s_buffer2), " ", tick_time);
+  strftime(s_buffer2, sizeof(s_buffer2), "%H", tick_time);
+  text_layer_set_text(s_low_layer, s_buffer2);
 
-  // Display this time on the TextLayer
-  text_layer_set_text(s_aika_layer, s_buffer2);
-
-  // Toimiskohan quiet time logiikka tassa?
   if (quiet_time_status == 1) {
-    text_layer_set_background_color(s_time_layer, GColorBlack);
-    text_layer_set_background_color(s_teksti_layer, GColorBlack);
-    text_layer_set_background_color(s_aika_layer, GColorBlack);
-    text_layer_set_text_color(s_time_layer, GColorWhite);
-    text_layer_set_text_color(s_teksti_layer, GColorWhite);
-    text_layer_set_text_color(s_aika_layer, GColorWhite);
+    text_layer_set_background_color(s_mid_layer, GColorBlack);
+    text_layer_set_background_color(s_up_layer, GColorBlack);
+    text_layer_set_background_color(s_low_layer, GColorBlack);
+    text_layer_set_text_color(s_mid_layer, GColorGreen);
+    text_layer_set_text_color(s_up_layer, GColorGreen);
+    text_layer_set_text_color(s_low_layer, GColorBlack);
   } else {
-    text_layer_set_background_color(s_time_layer, GColorWhite);
-    text_layer_set_background_color(s_teksti_layer, GColorWhite);
-    text_layer_set_background_color(s_aika_layer, GColorWhite);
-    text_layer_set_text_color(s_time_layer, GColorBlack);
-    text_layer_set_text_color(s_teksti_layer, GColorBlack);
-    text_layer_set_text_color(s_aika_layer, GColorBlack);
+    text_layer_set_background_color(s_mid_layer, GColorFromRGB(200, 200, 255));
+    text_layer_set_background_color(s_up_layer, GColorFromRGB(200, 200, 255));
+    text_layer_set_background_color(s_low_layer, GColorFromRGB(200, 200, 255));
+    text_layer_set_text_color(s_mid_layer, GColorOxfordBlue);
+    text_layer_set_text_color(s_up_layer, GColorOxfordBlue);
+    text_layer_set_text_color(s_low_layer, GColorOxfordBlue);
   }
-
-
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
@@ -53,48 +47,41 @@ static void main_window_load(Window *window) {
   GRect bounds = layer_get_bounds(window_layer);
 
   // Create the TextLayer with specific bounds
-  s_time_layer = text_layer_create(
-      GRect(0, 52, bounds.size.w, bounds.size.h));
-  
-  // Tehdaan toinen TextLayer
-  s_teksti_layer = text_layer_create(
+  s_up_layer = text_layer_create(
       GRect(0, 0, bounds.size.w, 52));
-  s_aika_layer = text_layer_create(
-      GRect(0, 150, bounds.size.w, 52));
+  s_mid_layer = text_layer_create(
+      GRect(0, 52, bounds.size.w, 98));
+  s_low_layer = text_layer_create(
+      GRect(0, 52+98, bounds.size.w, bounds.size.h));
 
-
-  // Improve the layout to be more like a watchface
-  text_layer_set_background_color(s_time_layer, GColorWhite);
-  text_layer_set_text_color(s_time_layer, GColorBlack);
-  text_layer_set_text(s_time_layer, " ");
-  text_layer_set_font(s_time_layer, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
-  text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
-
-  // Oman tekstilayerin setit
-  text_layer_set_background_color(s_teksti_layer, GColorWhite);
-  text_layer_set_text_color(s_teksti_layer, GColorBlack);
-  text_layer_set_text(s_teksti_layer, "0.0‰");
-  text_layer_set_font(s_teksti_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24));
-  text_layer_set_text_alignment(s_teksti_layer, GTextAlignmentCenter);
+  text_layer_set_background_color(s_up_layer, GColorWhite);
+  text_layer_set_text_color(s_up_layer, GColorBlack);
+  text_layer_set_text(s_up_layer, "FooBar");
+  text_layer_set_font(s_up_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+  text_layer_set_text_alignment(s_up_layer, GTextAlignmentCenter);
   
+  text_layer_set_background_color(s_mid_layer, GColorWhite);
+  text_layer_set_text_color(s_mid_layer, GColorBlack);
+  text_layer_set_text(s_mid_layer, " ");
+  text_layer_set_font(s_mid_layer, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
+  text_layer_set_text_alignment(s_mid_layer, GTextAlignmentCenter);
   
-  text_layer_set_background_color(s_aika_layer, GColorWhite);
-  text_layer_set_text_color(s_aika_layer, GColorBlack);
-  text_layer_set_text(s_aika_layer, "NN");
-  text_layer_set_font(s_aika_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-  text_layer_set_text_alignment(s_aika_layer, GTextAlignmentCenter);
+  text_layer_set_background_color(s_low_layer, GColorWhite);
+  text_layer_set_text_color(s_low_layer, GColorBlack);
+  text_layer_set_text(s_low_layer, "FooBar");
+  text_layer_set_font(s_low_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD));
+  text_layer_set_text_alignment(s_low_layer, GTextAlignmentCenter);
 
-  // Add it as a child layer to the Window's root layer
-  layer_add_child(window_layer, text_layer_get_layer(s_time_layer));
-  layer_add_child(window_layer, text_layer_get_layer(s_teksti_layer));
-  layer_add_child(window_layer, text_layer_get_layer(s_aika_layer));
+  layer_add_child(window_layer, text_layer_get_layer(s_up_layer));
+  layer_add_child(window_layer, text_layer_get_layer(s_mid_layer));
+  layer_add_child(window_layer, text_layer_get_layer(s_low_layer));
 }
 
 static void main_window_unload(Window *window) {
   // Destroy TextLayer
-  text_layer_destroy(s_time_layer);
-  text_layer_destroy(s_teksti_layer);
-  text_layer_destroy(s_aika_layer);
+  text_layer_destroy(s_up_layer);
+  text_layer_destroy(s_mid_layer);
+  text_layer_destroy(s_low_layer);
 }
 
 
