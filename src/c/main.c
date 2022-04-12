@@ -4,11 +4,13 @@ static Window *s_main_window;
 static TextLayer *s_mid_layer;
 static TextLayer *s_up_layer;
 static TextLayer *s_low_layer;
+static int foo = 70;
+static int bar = 80;
 
 static void update_time() {
   time_t epochtime = time(NULL);
   struct tm *tick_time = localtime(&epochtime);
-  time_t alku = 1649257200; // <-----------------------------------------
+  time_t alku = 1649728800; // <-----------------------------------------
   int erotus = (epochtime - alku) / (24 * 60 * 60);
   int quiet_time_status = quiet_time_is_active();
   
@@ -48,28 +50,26 @@ static void main_window_load(Window *window) {
 
   // Create the TextLayer with specific bounds
   s_up_layer = text_layer_create(
-      GRect(0, 0, bounds.size.w, 52));
+      GRect(0, 0, bounds.size.w, foo));
   s_mid_layer = text_layer_create(
-      GRect(0, 52, bounds.size.w, 98));
+      GRect(0, foo, bounds.size.w, bar));
   s_low_layer = text_layer_create(
-      GRect(0, 52+98, bounds.size.w, bounds.size.h));
+      GRect(0, foo+bar, bounds.size.w, bounds.size.h-foo-bar)); // ebin xD
 
   text_layer_set_background_color(s_up_layer, GColorWhite);
   text_layer_set_text_color(s_up_layer, GColorBlack);
-  text_layer_set_text(s_up_layer, "FooBar");
-  text_layer_set_font(s_up_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-  text_layer_set_text_alignment(s_up_layer, GTextAlignmentCenter);
+  text_layer_set_text(s_up_layer, "     0 A (pl. SR&PH)\n     0 K (pl. PWO)\n     0 NP");
+  text_layer_set_font(s_up_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  text_layer_set_text_alignment(s_up_layer, GTextAlignmentLeft);
   
   text_layer_set_background_color(s_mid_layer, GColorWhite);
   text_layer_set_text_color(s_mid_layer, GColorBlack);
-  text_layer_set_text(s_mid_layer, " ");
   text_layer_set_font(s_mid_layer, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
   text_layer_set_text_alignment(s_mid_layer, GTextAlignmentCenter);
   
   text_layer_set_background_color(s_low_layer, GColorWhite);
   text_layer_set_text_color(s_low_layer, GColorBlack);
-  text_layer_set_text(s_low_layer, "FooBar");
-  text_layer_set_font(s_low_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD));
+  text_layer_set_font(s_low_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
   text_layer_set_text_alignment(s_low_layer, GTextAlignmentCenter);
 
   layer_add_child(window_layer, text_layer_get_layer(s_up_layer));
